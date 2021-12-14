@@ -1,7 +1,8 @@
 # Third Party imports
 import pandas as pd
-import datetime as dt
-import pathlib
+from datetime import datetime
+from pathlib import Path
+from argparse import ArgumentParser
 import json
 
 from pprint import pprint
@@ -11,23 +12,22 @@ from typing import List, Dict
 from constants import *
 
 
-"""
-Workout entries to add:
-    12/12/2021 Deadlifts 3 sets of 4 reps with 100kg
-"""
-
-
 class WorkoutEntry:
     """
     Date level Workout Entry.
     """
 
-    def __init__(self, date: dt.datetime,
+    # TODO: Docstring
+
+    def __init__(self, date: datetime,
                  movement: str, weight: float, reps: List[int]) -> None:
         self.date = date
         self.movement = movement
         self.weight = weight
         self.reps = reps
+
+    def __del__(self):
+        print('Removing workout entry.')
 
     def print_workout_entry(self):
         print(f'date        = {self.date}\n'
@@ -48,14 +48,23 @@ class Store:
     caching the data from the store.
     """
     store_entries = []  # Dictionary of movements as keys and lists of WorkoutEntry objects
+    createOne = None
 
     def __init__(self, store_path: str) -> None:
         try:
             with open(store_path, 'r') as fd:
                 store_contents = json.load(fd)
             self._cache_store_entries(store_contents)
-        except FileNotFoundError as fnfe:
+        except FileNotFoundError:
             print(f'Store does not appear to exist.\n')
+
+            # TODO: Provide options and don't allow free-form input
+            create_store = input(f'Would you like to create a store?')
+
+            # TODO: Regular expression on input
+            if create_store.lower() == 'y':
+                store = open(store_path, 'w')
+                store.close()
 
     def _cache_store_entries(self, store_contents: dict) -> None:
         for movement, workout in store_contents.items():
@@ -66,14 +75,20 @@ class Store:
 
                     self.store_entries.append(workout_entry)
 
-    def add_entry(self, date: dt.datetime,
+    def add_entry(self, date: datetime,
                  movement: str, weight: float, reps: List[int]) -> None:
         """
         Add a Workout Entry to the local store cache.
         """
+
+        """
+        Workout entries to add:
+            12/12/2021 Deadlifts 3 sets of 4 reps with 100kg
+        """
         # TODO: Check if entry exists with supplied date and movement
         # TODO: If an entry does exist, then append the new data.
         # TODO: Else, create a new entry.
+
         ...
 
     def print_store_contents(self) -> None:
@@ -85,13 +100,36 @@ class Store:
             entry.print_workout_entry()
 
 
+def skeleton_store() -> dict:
+    return {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "profile": {
+            "Forename": None,
+            "Surname": None,
+            "Age": None,
+            "Gender": None
+        },
+        "preferences": {
+            "Training Days": {
+                "Monday": None,
+                "Tuesday": None,
+                "Wednesday": None,
+                "Thursday": None,
+                "Friday": None,
+                "Saturday": None,
+                "Sunday": None
+            }
+        }
+    }
+
+
 def main() -> None:
     """
     The main runtime of the application.
     """
     # TODO: Argument parser
 
-    store = Store('store.json')
+    store = Store(STORE_PATH)
     store.print_store_contents()
 
     # TODO: Write local store cache to the store.json when finished,

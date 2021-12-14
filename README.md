@@ -12,3 +12,14 @@ A script designed to track my resistance training progress over time.
         - Dates when highlights occured
 
 # TODO
+
+# Workout Structure
+Week 1 – 3 x 5
+Week 2 – 3 x 3
+Week 3 – 3 x 5, 3, 1
+Week 4 – Deload
+
+# Training days
+Wednesday - Squat
+Friday - Bench Press
+Sunday - Deadlift
